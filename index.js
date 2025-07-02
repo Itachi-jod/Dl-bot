@@ -1,6 +1,6 @@
 const fs = require("fs");
 const login = require("fb-chat-api");
-const downloader = require("./scripts/events/downloder");
+const downloader = require("./scripts/cmds/downloder");
 
 const appStatePath = "./appstate.json";
 
