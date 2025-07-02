@@ -1,17 +1,35 @@
-const login = require("fca-unofficial");
 const fs = require("fs");
+const login = require("fb-chat-api");
 const downloader = require("./scripts/events/downloader");
 
-login({ appState: JSON.parse(fs.readFileSync("appstate.json", "utf8")) }, (err, api) => {
-  if (err) return console.error(err);
+const appStatePath = "./appstate.json";
 
+let appState = null;
+if (fs.existsSync(appStatePath)) {
+  appState = JSON.parse(fs.readFileSync(appStatePath, "utf8"));
+} else {
+  console.error("Error: appstate.json not found. Please login and create it.");
+  process.exit(1);
+}
+
+login({ appState }, (err, api) => {
+  if (err) {
+    console.error("Login error:", err);
+    return;
+  }
+
+  // Save updated appState when changed (token refresh etc)
   api.setOptions({ listenEvents: true });
+  api.on("appStateChange", (newState) => {
+    fs.writeFileSync(appStatePath, JSON.stringify(newState, null, 2));
+  });
 
-  api.listenMqtt((err, event) => {
-    if (err) return console.error(err);
-    if (event.type === "message" || event.type === "message_reply") {
-      downloader.onEvent({ api, event });
+  api.listen((err, event) => {
+    if (err) {
+      console.error(err);
+      return;
     }
+    downloader.onEvent({ api, event });
   });
 });
-      
+  
