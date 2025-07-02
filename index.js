@@ -3,8 +3,8 @@ const login = require("fb-chat-api");
 const downloader = require("./scripts/cmds/downloder");
 
 const appStatePath = "./appstate.json";
-
 let appState = null;
+
 if (fs.existsSync(appStatePath)) {
   appState = JSON.parse(fs.readFileSync(appStatePath, "utf8"));
 } else {
@@ -18,18 +18,23 @@ login({ appState }, (err, api) => {
     return;
   }
 
-  // Save updated appState when changed (token refresh etc)
-  api.setOptions({ listenEvents: true });
-  api.on("appStateChange", (newState) => {
-    fs.writeFileSync(appStatePath, JSON.stringify(newState, null, 2));
+  console.log("✅ Bot logged in successfully.");
+
+  // Save updated appState on exit for safety
+  process.on("exit", () => {
+    fs.writeFileSync(appStatePath, JSON.stringify(api.getAppState(), null, 2));
+    console.log("💾 appState saved on exit.");
   });
 
-  api.listen((err, event) => {
+  // Listen for incoming messages
+  api.listenMqtt((err, event) => {
     if (err) {
       console.error(err);
       return;
     }
+
+    // Pass api and event to downloader
     downloader.onEvent({ api, event });
   });
 });
-  
+             
