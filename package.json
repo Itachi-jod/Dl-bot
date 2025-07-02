@@ -1,4 +1,5 @@
-"name": "goatbot-downloader",
+{
+  "name": "goatbot-downloader",
   "version": "1.0.0",
   "description": "Downloader-only bot using fb-chat-api",
   "main": "index.js",
@@ -20,6 +21,7 @@
     "express-rate-limit": "^6.5.2",
     "express-session": "^1.17.3",
     "ffmpeg-static": "^5.2.0",
+    "fb-chat-api": "github:MinatoCodes/fb-chat-api",
     "form-data": "^4.0.0",
     "fs-extra": "^11.1.0",
     "googleapis": "^100.0.0",
@@ -70,7 +72,6 @@
     "pm2": "^5.3.0",
     "prettier": "^2.7.1",
     "prompt-checkbox": "^2.2.0",
-    "terser": "^5.15.0{
-  
+    "terser": "^5.15.0"
   }
-}
+  }
