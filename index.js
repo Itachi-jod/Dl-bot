@@ -1,4 +1,4 @@
-const login = require("fca-unofficial-thanhbao");
+const login = require("fca-unofficial");
 const fs = require("fs");
 const downloader = require("./scripts/events/downloader");
 
