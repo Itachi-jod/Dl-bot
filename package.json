@@ -8,6 +8,7 @@
   },
   "dependencies": {
     "axios": "^1.6.7",
-    "fca-unofficial-thanhbao": "^1.0.0"
+    "fca-unofficial": "git+https://github.com/MinatoDevel/Bot2/tree/main/fb-chat-api"
+
   }
 }
