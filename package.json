@@ -8,6 +8,6 @@
   },
   "dependencies": {
     "axios": "^1.6.7",
-    "fca-unofficial": "^2.0.0"
+    "fca-unofficial-thanhbao": "^1.0.0"
   }
 }
