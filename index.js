@@ -2,6 +2,14 @@ const fs = require("fs");
 const login = require("fb-chat-api");
 const downloader = require("./scripts/cmds/downloder");
 
+const PORT = process.env.PORT || 3000;
+app.get("/", (req, res) => {
+  res.send("Bot is running!");
+});
+app.listen(PORT, () => {
+  console.log(`✅ Web server running on port ${PORT}`);
+});
+
 const appStatePath = "./appstate.json";
 let appState = null;
 
