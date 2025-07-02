@@ -4,25 +4,13 @@ const path = require("path");
 const { parse } = require("url");
 
 module.exports = {
-  config: {
-    name: "autolink",
-    version: "2.3",
-    author: "Lord Itachi",
-    countDown: 5,
-    role: 0,
-    shortDescription: "Auto-detect video links and download them",
-    longDescription: "Detects video links in chat and downloads the video automatically.",
-    category: "media",
-    guide: "No need to use command. Just send a video link.",
-  },
-
-  onStart: async function () {},
-
-  onChat: async function ({ message, event, api }) {
+  onEvent: async function({ api, event }) {
     try {
-      const text = event.body || "";
+      if (event.type !== "message" || !event.body) return;
+
+      const text = event.body;
       const urlMatch = text.match(/https?:\/\/[^\s]+/);
-      if (!urlMatch) return; // No URL found, ignore
+      if (!urlMatch) return;
 
       const url = urlMatch[0];
       const hostname = parse(url).hostname || "";
@@ -34,7 +22,6 @@ module.exports = {
       else if (hostname.includes("youtube") || hostname.includes("youtu.be")) platform = "YouTube";
       else if (hostname.includes("x.com") || hostname.includes("twitter")) platform = "Twitter";
 
-      // Send URL to your downloader API
       const apiUrl = `https://dev-priyanshi.onrender.com/api/alldl?url=${encodeURIComponent(url)}`;
 
       const res = await axios.get(apiUrl, { timeout: 30000 });
@@ -42,10 +29,10 @@ module.exports = {
       const title = res.data?.data?.title || "Unknown Title";
 
       if (!videoUrl || !videoUrl.startsWith("http")) {
-        return; // No valid video URL, stop here silently
+        console.log("❌ No valid video URL found.");
+        return;
       }
 
-      // Download video stream
       const response = await axios({
         method: "GET",
         url: videoUrl,
@@ -57,7 +44,6 @@ module.exports = {
       if (!fs.existsSync(cacheDir)) fs.mkdirSync(cacheDir);
 
       const filePath = path.join(cacheDir, `video_${Date.now()}.mp4`);
-
       const writer = fs.createWriteStream(filePath);
       response.data.pipe(writer);
 
@@ -76,7 +62,6 @@ module.exports = {
         );
       }
 
-      // Send the downloaded video with platform and title info
       await api.sendMessage(
         {
           body: `Here's your downloaded video!\n\nPlatform: ${platform}\nTitle: ${title}`,
@@ -96,9 +81,10 @@ module.exports = {
         },
         event.messageID
       );
+
     } catch (err) {
-      console.error("AutoLink Error:", err.message);
+      console.error("Downloader Error:", err.message);
     }
-  },
+  }
 };
-      
+               
